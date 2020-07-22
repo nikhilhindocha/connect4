@@ -139,6 +139,7 @@ var Connect4 = /*#__PURE__*/function () {
     this.COLS = 7;
     this.selector = selector;
     this.createGrid();
+    this.setupEventListeners();
   }
 
   _createClass(Connect4, [{
@@ -151,12 +152,40 @@ var Connect4 = /*#__PURE__*/function () {
         var $row = $('<div>').addClass('row');
 
         for (var col = 0; col < this.COLS; col++) {
-          var $col = $('<div>').addClass('col empty');
+          var $col = $('<div>').addClass('col empty').attr('data-col', col).attr('data-row', row);
           $row.append($col);
         }
 
         $board.append($row);
       }
+    }
+  }, {
+    key: "setupEventListeners",
+    value: function setupEventListeners() {
+      var $board = $(this.selector);
+
+      function findLastEmptyCell(col) {
+        var cells = $(".col[data-col='".concat(col, "']"));
+
+        for (var i = cells.length - 1; i >= 0; i--) {
+          var $cell = $(cells[i]);
+
+          if ($cell.hasClass('empty')) {
+            return $cell;
+          }
+        }
+
+        console.log(cells);
+      }
+
+      $board.on('mouseenter', '.col.empty', function () {
+        var col = $(this).data('col');
+        var $lastEmptyCell = findLastEmptyCell(col);
+        $lastEmptyCell.addClass("next-red");
+      });
+      $board.on('mouseleave', '.col', function () {
+        $('.col').removeClass("next-red");
+      });
     }
   }]);
 
