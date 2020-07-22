@@ -137,6 +137,7 @@ var Connect4 = /*#__PURE__*/function () {
 
     this.ROWS = 6;
     this.COLS = 7;
+    this.player = 'red';
     this.selector = selector;
     this.createGrid();
     this.setupEventListeners();
@@ -163,6 +164,7 @@ var Connect4 = /*#__PURE__*/function () {
     key: "setupEventListeners",
     value: function setupEventListeners() {
       var $board = $(this.selector);
+      var that = this;
 
       function findLastEmptyCell(col) {
         var cells = $(".col[data-col='".concat(col, "']"));
@@ -181,10 +183,18 @@ var Connect4 = /*#__PURE__*/function () {
       $board.on('mouseenter', '.col.empty', function () {
         var col = $(this).data('col');
         var $lastEmptyCell = findLastEmptyCell(col);
-        $lastEmptyCell.addClass("next-red");
+        $lastEmptyCell.addClass("next-".concat(that.player));
       });
       $board.on('mouseleave', '.col', function () {
-        $('.col').removeClass("next-red");
+        $('.col').removeClass("next-".concat(that.player));
+      });
+      $board.on('click', '.col.empty', function () {
+        var col = $(this).data('col');
+        var $lastEmptyCell = findLastEmptyCell(col);
+        $lastEmptyCell.removeClass("empty next-".concat(that.player));
+        $lastEmptyCell.addClass(that.player);
+        that.player = that.player === 'red' ? 'black' : 'red';
+        $(this).trigger('mouseenter');
       });
     }
   }]);
